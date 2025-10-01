@@ -103,15 +103,18 @@ EXPORT void emit_ocaml_stdlib_pkg(UT_string *dst_dir,
     /* write_buf(ocamlsdk_stdlib_BUILD, */
     /*           ocamlsdk_stdlib_BUILD_len, */
     /*           utstring_body(dst_file)); */
-    f = BAZEL_CURRENT_REPOSITORY
-        "/lib/templates/ocamlsdk/stdlib.BUILD";
-    rf = rf_rlocation(f);
-    copy_buildfile(rf, dst_file);
-
-    // Append all_files filegroup for rules_ocaml
-    FILE *build_file = fopen(utstring_body(dst_file), "a");
+    // Write BUILD file directly instead of copying template
+    FILE *build_file = fopen(utstring_body(dst_file), "w");
     if (build_file != NULL) {
-        fprintf(build_file, "\nfilegroup(\n");
+        fprintf(build_file, "# generated file - DO NOT EDIT\n\n");
+        fprintf(build_file, "load(\"@rules_ocaml//build:rules.bzl\", \"ocaml_import\")\n\n");
+        fprintf(build_file, "exports_files(glob([\"**\"]))\n\n");
+        fprintf(build_file, "filegroup( ## for js_of_ocaml\n");
+        fprintf(build_file, "    name       = \"cma\",\n");
+        fprintf(build_file, "    srcs       = [\"stdlib.cma\"],\n");
+        fprintf(build_file, "    visibility = [\"//visibility:public\"],\n");
+        fprintf(build_file, ")\n\n");
+        fprintf(build_file, "filegroup(\n");
         fprintf(build_file, "    name = \"all_files\",\n");
         fprintf(build_file, "    srcs = glob([\"**/*\"]),\n");
         fprintf(build_file, "    visibility = [\"//visibility:public\"],\n");
