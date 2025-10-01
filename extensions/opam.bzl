@@ -13,7 +13,7 @@ load("//extensions/opam:opam_ops.bzl",
      "opam_install_pkg",
      "print_cwd", "print_tree")
 
-CONFIG_TOOL_NONCE = "stdlib-all-files-20250930"
+CONFIG_TOOL_NONCE = "glob-hdrs-20251001"
 TOOLS_OPAM_GIT_REMOTE = "https://github.com/carverauto/tools_opam.git"
 TOOLS_OPAM_GIT_COMMIT = "5b61e6922a91a90e113d3dfd59dc6fd1fb46b6ed"
 
