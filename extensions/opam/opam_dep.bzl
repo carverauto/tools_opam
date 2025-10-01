@@ -93,6 +93,10 @@ def _opam_dep_repo_impl(rctx):
         repo_pkg,
         switch_pfx)
     )
+    # Reference the nonce to make repository invocations sensitive to
+    # changes in the config tool binary.
+    _ = rctx.attr.config_tool_nonce
+
     config_tool = rctx.path(rctx.attr.config_tool)
     if not config_tool.exists:
         fail("config tool not found at %s" % config_tool)
@@ -213,6 +217,7 @@ opam_dep = repository_rule(
             mandatory = False,
         ),
         "config_tool": attr.string(),
+        "config_tool_nonce": attr.string(),
         "debug":      attr.int(default=0),
         "opam_verbosity": attr.int(default=0),
         "verbosity":  attr.int(default=0),

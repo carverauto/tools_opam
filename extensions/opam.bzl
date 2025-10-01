@@ -13,6 +13,8 @@ load("//extensions/opam:opam_ops.bzl",
      "opam_install_pkg",
      "print_cwd", "print_tree")
 
+CONFIG_TOOL_NONCE = "stdlib-all-files-20250930"
+
 ## RELEASE CHECKLIST
 ## - set version ids of bazel_deps in _build_config_tool
 ## - remove dev registry from bazel build cmd
@@ -470,6 +472,7 @@ use_repo(opam_dev, "dbg")
              ocaml_version = ocaml_version,
              obazl_pfx = obazl_pfx,
              config_tool = str(config_pkg_tool),
+             config_tool_nonce = CONFIG_TOOL_NONCE,
              debug = debug,
              verbosity = verbosity)
     opam_dep(name="{}stublibs".format(obazl_pfx),
@@ -480,6 +483,7 @@ use_repo(opam_dev, "dbg")
              ocaml_version = ocaml_version,
              obazl_pfx = obazl_pfx,
              config_tool = str(config_pkg_tool),
+             config_tool_nonce = CONFIG_TOOL_NONCE,
              debug = debug,
              verbosity = verbosity)
 
@@ -575,6 +579,7 @@ use_repo(opam_dev, "dbg")
                  ocaml_version = ocaml_version,
                  obazl_pfx = obazl_pfx,
                  config_tool = str(config_pkg_tool),
+                 config_tool_nonce = CONFIG_TOOL_NONCE,
                  debug = debug,
                  verbosity = verbosity
                  )
