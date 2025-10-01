@@ -14,6 +14,8 @@ load("//extensions/opam:opam_ops.bzl",
      "print_cwd", "print_tree")
 
 CONFIG_TOOL_NONCE = "stdlib-all-files-20250930"
+TOOLS_OPAM_GIT_REMOTE = "https://github.com/carverauto/tools_opam.git"
+TOOLS_OPAM_GIT_COMMIT = "5b61e6922a91a90e113d3dfd59dc6fd1fb46b6ed"
 
 ## RELEASE CHECKLIST
 ## - set version ids of bazel_deps in _build_config_tool
@@ -40,7 +42,14 @@ def _build_config_tool(mctx, toolchain, debug, verbosity):
     # cmd = ["tree", "-aL", "1", "../../external"]
     # mctx.execute(cmd, quiet = False)
 
-    tools_opam_override = ""
+    tools_opam_override = """
+git_override(
+    module_name = "tools_opam",
+    remote = \"{remote}\",
+    commit = \"{commit}\",
+)
+
+""".format(remote = TOOLS_OPAM_GIT_REMOTE, commit = TOOLS_OPAM_GIT_COMMIT)
     tools_opam_override_flag = None
     # Disabled local vendored override - using git_override instead
     # marker = mctx.path("../../DO_NOT_BUILD_HERE")
