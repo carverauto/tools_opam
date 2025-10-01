@@ -279,7 +279,18 @@ EXPORT void ext_emit_module_file(UT_string *module_file,
                     if ((strncmp(dep_pkg_name, "opam.", 5) == 0) && (strlen(dep_pkg_name) > 5)) {
                         dep_pkg_name += 5;
                     }
-                    utstring_printf(dep_meta_path, "%s/%s/META", switch_lib, dep_pkg_name);
+                    const char *dot = strchr(dep_pkg_name, '.');
+                    if (dot) {
+                        size_t base_len = dot - dep_pkg_name;
+                        utstring_printf(dep_meta_path, "%s/%.*s/META",
+                                        switch_lib,
+                                        (int)base_len,
+                                        dep_pkg_name);
+                    } else {
+                        utstring_printf(dep_meta_path, "%s/%s/META",
+                                        switch_lib,
+                                        dep_pkg_name);
+                    }
                     if (access(utstring_body(dep_meta_path), F_OK) != 0) {
                         utstring_clear(dep_meta_path);
                         continue;
@@ -341,9 +352,18 @@ EXPORT void ext_emit_module_file(UT_string *module_file,
                             (strlen(dep_pkg_name) > 5)) {
                             dep_pkg_name += 5;
                         }
-                        utstring_printf(codep_meta_path, "%s/%s/META",
-                                        switch_lib,
-                                        dep_pkg_name);
+                        const char *codep_dot = strchr(dep_pkg_name, '.');
+                        if (codep_dot) {
+                            size_t base_len = codep_dot - dep_pkg_name;
+                            utstring_printf(codep_meta_path, "%s/%.*s/META",
+                                            switch_lib,
+                                            (int)base_len,
+                                            dep_pkg_name);
+                        } else {
+                            utstring_printf(codep_meta_path, "%s/%s/META",
+                                            switch_lib,
+                                            dep_pkg_name);
+                        }
                         if (access(utstring_body(codep_meta_path), F_OK) == 0) {
                             utstring_clear(codep_meta_path);
                             fprintf(ostream, "bazel_dep(name = \"%s\", version = \"%s\")\n",
