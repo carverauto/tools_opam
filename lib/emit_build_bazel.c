@@ -691,47 +691,9 @@ Note that "archive" should only be used for archive files that are intended to b
     /*                 "archive", */
     /*                 _pkg); */
 
-    // do we have any .h files?
-    /* char **found; */
-    glob_t globs;
-    UT_string *globber;
-    utstring_new(globber);
-    utstring_printf(globber, "%s/%s/*.h", opam_switch_dir, _filedeps_path);
-
-    // Check if directory exists before globbing
-    UT_string *dir_path;
-    utstring_new(dir_path);
-    utstring_printf(dir_path, "%s/%s", opam_switch_dir, _filedeps_path);
-    struct stat st;
-    bool dir_exists = (stat(utstring_body(dir_path), &st) == 0 && S_ISDIR(st.st_mode));
-    utstring_free(dir_path);
-
-    if (dir_exists) {
-        errno = 0;
-        int rc = glob(utstring_body(globber), 0 , NULL, &globs);
-        if (rc == 0) {
-            if (globs.gl_pathc > 0) {
-                /* fprintf(ostream, "## globbed: %s\n", utstring_body(globber)); */
-                fprintf(ostream, "\ncc_library(\n");
-                fprintf(ostream, "    name     = \"hdrs\",\n");
-                fprintf(ostream, "    hdrs     = glob([\"*.h\"], allow_empty=True),\n");
-                fprintf(ostream, "    includes = [\".\"],\n");
-                fprintf(ostream, "    deps     = [\"@opam.ocamlsdk//ffi/lib\"],\n");
-                fprintf(ostream, ")\n\n");
-            }
-        } else if (rc == GLOB_NOMATCH) {
-            LOG_DEBUG(0, "glob nomatch: %s", utstring_body(globber));
-        } else {
-            LOG_WARN(0, "glob error (%d) on pattern %s: %s",
-                     rc,
-                     utstring_body(globber),
-                     strerror(errno));
-        }
-        globfree(&globs);
-    } else {
-        LOG_DEBUG(0, "Directory does not exist, skipping glob: %s/%s", opam_switch_dir, _filedeps_path);
-    }
-    utstring_free(globber);
+    // Header detection disabled for now to avoid globbing issues in remote
+    // execution environments. If we need to surface C headers from opam
+    // packages again, add a more resilient implementation here.
 
     /* write scheme opam-resolver table */
     fprintf(ostream, "\nocaml_import(\n");
