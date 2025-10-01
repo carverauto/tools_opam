@@ -108,6 +108,17 @@ EXPORT void emit_ocaml_stdlib_pkg(UT_string *dst_dir,
     rf = rf_rlocation(f);
     copy_buildfile(rf, dst_file);
 
+    // Append all_files filegroup for rules_ocaml
+    FILE *build_file = fopen(utstring_body(dst_file), "a");
+    if (build_file != NULL) {
+        fprintf(build_file, "\nfilegroup(\n");
+        fprintf(build_file, "    name = \"all_files\",\n");
+        fprintf(build_file, "    srcs = glob([\"**/*\"]),\n");
+        fprintf(build_file, "    visibility = [\"//visibility:public\"],\n");
+        fprintf(build_file, ")\n");
+        fclose(build_file);
+    }
+
     if (add_toplevel) {
         // not found: <switch>/lib/stdlib
         // means >= 5.0.0 (<switch>/lib/ocaml/stdlib)
