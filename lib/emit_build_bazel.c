@@ -709,7 +709,7 @@ Note that "archive" should only be used for archive files that are intended to b
     if (dir_exists) {
         errno = 0;
         int rc = glob(utstring_body(globber), 0 , NULL, &globs);
-        if( rc == 0 ) {
+        if (rc == 0) {
             if (globs.gl_pathc > 0) {
                 /* fprintf(ostream, "## globbed: %s\n", utstring_body(globber)); */
                 fprintf(ostream, "\ncc_library(\n");
@@ -719,14 +719,15 @@ Note that "archive" should only be used for archive files that are intended to b
                 fprintf(ostream, "    deps     = [\"@opam.ocamlsdk//ffi/lib\"],\n");
                 fprintf(ostream, ")\n\n");
             }
+        } else if (rc == GLOB_NOMATCH) {
+            LOG_DEBUG(0, "glob nomatch: %s", utstring_body(globber));
         } else {
-            if( rc == GLOB_NOMATCH ) {
-                LOG_DEBUG(0, "glob nomatch: %s", utstring_body(globber));
-            } else {
-                log_error("Some kinda glob error");
-                exit(1);
-            }
+            LOG_WARN(0, "glob error (%d) on pattern %s: %s",
+                     rc,
+                     utstring_body(globber),
+                     strerror(errno));
         }
+        globfree(&globs);
     } else {
         LOG_DEBUG(0, "Directory does not exist, skipping glob: %s/%s", opam_switch_dir, _filedeps_path);
     }
