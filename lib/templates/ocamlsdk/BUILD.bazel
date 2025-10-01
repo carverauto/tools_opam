@@ -8,6 +8,8 @@ filegroup(
     visibility = ["//lib:__pkg__"],
 )
 
+exports_files(["stdlib.BUILD.c"])
+
 filegroup(
     name = "buildfiles",
     srcs = glob(["*.BUILD"]),

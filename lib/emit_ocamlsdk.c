@@ -21,6 +21,8 @@
 
 #include "emit_ocamlsdk.h"
 
+#include "templates/ocamlsdk/stdlib.BUILD.c"
+
 extern int verbosity;
 extern int log_writes;
 extern int log_symlinks;

@@ -36,7 +36,10 @@ cc_library(
         # "//lib/templates/ocamlsdk",
         # "//lib/templates/toolchain",
     ],
-    hdrs = ["tools_opam.h"],
+    hdrs = [
+        "tools_opam.h",
+        "//lib/templates/ocamlsdk:stdlib.BUILD.c",
+    ],
     copts = BASE_COPTS + [
         # "-ftime-report"
         # only for clang 15/
