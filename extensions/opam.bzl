@@ -40,18 +40,19 @@ def _build_config_tool(mctx, toolchain, debug, verbosity):
 
     tools_opam_override = ""
     tools_opam_override_flag = None
-    marker = mctx.path("../../DO_NOT_BUILD_HERE")
-    if marker.exists:
-        repo_root = mctx.path(mctx.read(marker))
-        override_candidate = str(repo_root) + "/third_party/vendor/tools_opam"
-        if mctx.path(override_candidate).exists:
-            tools_opam_override = """
-local_path_override(
-    module_name = "tools_opam",
-    path = \"{path}\",
-)
-""".format(path = override_candidate)
-            tools_opam_override_flag = override_candidate
+    # Disabled local vendored override - using git_override instead
+    # marker = mctx.path("../../DO_NOT_BUILD_HERE")
+    # if marker.exists:
+    #     repo_root = mctx.path(mctx.read(marker))
+    #     override_candidate = str(repo_root) + "/third_party/vendor/tools_opam"
+    #     if mctx.path(override_candidate).exists:
+    #         tools_opam_override = """
+    # local_path_override(
+    #     module_name = "tools_opam",
+    #     path = \"{path}\",
+    # )
+    # """.format(path = override_candidate)
+    #         tools_opam_override_flag = override_candidate
 
     mctx.file(
         "MODULE.bazel",
