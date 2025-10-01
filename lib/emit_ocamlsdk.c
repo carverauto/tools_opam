@@ -1557,6 +1557,35 @@ EXPORT void emit_ocaml_dynlink_pkg(UT_string *dst_dir,
 
     utstring_free(dst_file);
     utstring_free(dynlink_dir);
+
+    // Provide @opam.ocamlsdk//lib/dynlink alias for compiler-libs deps.
+    UT_string *alias_dir;
+    utstring_new(alias_dir);
+    utstring_printf(alias_dir, "lib/dynlink");
+    mkdir_r(utstring_body(alias_dir));
+
+    UT_string *alias_file;
+    utstring_new(alias_file);
+    utstring_printf(alias_file, "%s/BUILD.bazel",
+                    utstring_body(alias_dir));
+
+    FILE *alias_stream = fopen(utstring_body(alias_file), "w");
+    if (alias_stream == NULL) {
+        log_error("fopen fail: %s", strerror(errno));
+        perror(utstring_body(alias_file));
+        exit(EXIT_FAILURE);
+    }
+    fprintf(alias_stream, "# generated file - DO NOT EDIT\n\n");
+    fprintf(alias_stream,
+            "alias(\n"
+            "    name = \"dynlink\",\n"
+            "    actual = \"@opam.ocamlsdk//dynlink/lib:dynlink\",\n"
+            "    visibility = [\"//visibility:public\"],\n"
+            ")\n");
+    fclose(alias_stream);
+
+    utstring_free(alias_file);
+    utstring_free(alias_dir);
     TRACE_EXIT;
 }
 
