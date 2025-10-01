@@ -13,7 +13,7 @@ char *platforms_version = "0.0.10";
 char *skylib_version    = "1.7.1";
 char *rules_cc_version  = "0.0.17";
 
-char *rules_ocaml_version = "5.0.0";  /* "2.1.0"; */
+char *rules_ocaml_version = "3.0.0.beta.1";  /* "2.1.0"; */
 char *ocaml_version = "0.0.0";
 char *compiler_version;
 
@@ -24,4 +24,3 @@ bool enable_jsoo;
 int level = 0;
 int spfactor = 4;
 char *sp = " ";
-
