@@ -237,6 +237,8 @@ EXPORT void ext_emit_module_file(UT_string *module_file,
         fprintf(ostream, "\n");
 
         // get **repo** deps: direct deps of pkg and all subpkgs
+        UT_string *dep_meta_path;
+        utstring_new(dep_meta_path);
         if (pkg_deps) {
             p = NULL;
             /* struct obzl_meta_package *pkg; */
@@ -273,6 +275,16 @@ EXPORT void ext_emit_module_file(UT_string *module_file,
                     /*         sprintf(version, "%d.%d.%d", -1, -1 , -1); */
                     /*     } */
                     /* } */
+                    const char *dep_pkg_name = *p;
+                    if ((strncmp(dep_pkg_name, "opam.", 5) == 0) && (strlen(dep_pkg_name) > 5)) {
+                        dep_pkg_name += 5;
+                    }
+                    utstring_printf(dep_meta_path, "%s/%s/META", switch_lib, dep_pkg_name);
+                    if (access(utstring_body(dep_meta_path), F_OK) != 0) {
+                        utstring_clear(dep_meta_path);
+                        continue;
+                    }
+                    utstring_clear(dep_meta_path);
                     fprintf(ostream, "bazel_dep(name = \"%s\", version = \"%s\")\n",
                             *p, default_version);
                     /* fprintf(ostream, "bazel_dep(name = \"opam.%s\", version = \"%s\") # %s\n", */
@@ -282,6 +294,7 @@ EXPORT void ext_emit_module_file(UT_string *module_file,
                 }
             }
         }
+        utstring_free(dep_meta_path);
     }
     /* HACK ALERT! This hideous code deals with ppx_runtime_deps,
        and must check to prevent duplicates.
@@ -292,6 +305,8 @@ EXPORT void ext_emit_module_file(UT_string *module_file,
     }
     UT_array *pkg_codeps = findlib_pkg_codeps(_pkg, true);
     if (pkg_codeps) {
+        UT_string *codep_meta_path;
+        utstring_new(codep_meta_path);
         char **p = NULL;
         /* struct obzl_meta_package *pkg; */
         /* LOG_DEBUG(0, "HASH CT: %d", HASH_COUNT(_pkgs)); */
@@ -321,16 +336,32 @@ EXPORT void ext_emit_module_file(UT_string *module_file,
                     already = NULL;
                     already = (char**)utarray_find(pkg_deps, p, strsort);
                     if (already == NULL) {
-                        fprintf(ostream, "bazel_dep(name = \"%s\", version = \"%s\")\n",
-                                *p, default_version);
-                        /* fprintf(ostream, "bazel_dep(name = \"%s\", # %s\n", */
-                        /*         *p, version); */
-                        /* fprintf(ostream, "          version = \"%s\") #codep\n", */
-                        /*         default_version); */
+                        const char *dep_pkg_name = *p;
+                        if ((strncmp(dep_pkg_name, "opam.", 5) == 0) &&
+                            (strlen(dep_pkg_name) > 5)) {
+                            dep_pkg_name += 5;
+                        }
+                        utstring_printf(codep_meta_path, "%s/%s/META",
+                                        switch_lib,
+                                        dep_pkg_name);
+                        if (access(utstring_body(codep_meta_path), F_OK) == 0) {
+                            utstring_clear(codep_meta_path);
+                            fprintf(ostream, "bazel_dep(name = \"%s\", version = \"%s\")\n",
+                                    *p, default_version);
+                            /* fprintf(ostream, "bazel_dep(name = \"%s\", # %s\n", */
+                            /*         *p, version); */
+                            /* fprintf(ostream, "          version = \"%s\") #codep\n", */
+                            /*         default_version); */
+                        } else {
+                            utstring_clear(codep_meta_path);
+                        }
                     }
                 }
             }
         }
+        utarray_free(pkg_codeps);
+        utstring_free(codep_meta_path);
+        pkg_codeps = NULL;
     }
 
     fprintf(ostream, "\n");

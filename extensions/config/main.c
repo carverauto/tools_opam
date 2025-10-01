@@ -19,6 +19,7 @@
 #include "gopt.h"
 #include "liblogc.h"
 #include "librunfiles.h"
+#include "utarray.h"
 #include "utstring.h"
 
 #include "main.h"
@@ -263,4 +264,3 @@ int main(int argc, char *argv[])
     /* fprintf(stdout, "dep01\n"); */
     /* fprintf(stdout, "dep02\n"); */
     /* fprintf(stdout, "cwd: %s\n", cwd); */
-
