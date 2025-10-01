@@ -28,6 +28,9 @@ cc_binary(
         ## for realpath
         "@platforms//os:linux": ["_XOPEN_SOURCE=500"],
         "//conditions:default": [],
+    }) + select({
+        "@platforms//os:linux": ["XCOMPILE_LINUX"],
+        "//conditions:default": [],
     }),
     features = ["layering_check"],
     includes = ["."],
