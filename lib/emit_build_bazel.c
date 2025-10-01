@@ -657,6 +657,7 @@ LOCAL void emit_bazel_archive_rule(FILE *ostream,
                              obzl_meta_package *_pkg)
 {
     (void)level;
+    (void)opam_switch_dir;
 #if defined(PROFILE_fastbuild)
     LOG_DEBUG(0, "EMIT_BAZEL_ARCHIVE_RULE: _filedeps_path: %s", _filedeps_path);
 #endif
