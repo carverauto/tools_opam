@@ -100,27 +100,9 @@ EXPORT void emit_ocaml_stdlib_pkg(UT_string *dst_dir,
     // always emit <coswitch>/lib/ocaml/stdlib
     utstring_printf(dst_file, "%s/BUILD.bazel",
                     utstring_body(dst_dir));
-    /* write_buf(ocamlsdk_stdlib_BUILD, */
-    /*           ocamlsdk_stdlib_BUILD_len, */
-    /*           utstring_body(dst_file)); */
-    // Write BUILD file directly instead of copying template
-    FILE *build_file = fopen(utstring_body(dst_file), "w");
-    if (build_file != NULL) {
-        fprintf(build_file, "# generated file - DO NOT EDIT\n\n");
-        fprintf(build_file, "load(\"@rules_ocaml//build:rules.bzl\", \"ocaml_import\")\n\n");
-        fprintf(build_file, "exports_files(glob([\"**\"]))\n\n");
-        fprintf(build_file, "filegroup( ## for js_of_ocaml\n");
-        fprintf(build_file, "    name       = \"cma\",\n");
-        fprintf(build_file, "    srcs       = [\"stdlib.cma\"],\n");
-        fprintf(build_file, "    visibility = [\"//visibility:public\"],\n");
-        fprintf(build_file, ")\n\n");
-        fprintf(build_file, "filegroup(\n");
-        fprintf(build_file, "    name = \"all_files\",\n");
-        fprintf(build_file, "    srcs = glob([\"**/*\"]),\n");
-        fprintf(build_file, "    visibility = [\"//visibility:public\"],\n");
-        fprintf(build_file, ")\n");
-        fclose(build_file);
-    }
+    write_buf(ocamlsdk_stdlib_BUILD,
+              ocamlsdk_stdlib_BUILD_len,
+              utstring_body(dst_file));
 
     if (add_toplevel) {
         // not found: <switch>/lib/stdlib
